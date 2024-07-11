@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMP180 Sensor Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .data-container {
+            margin: 20px;
+        }
+        .data-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .data-value {
+            font-size: 2em;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <h1>BMP180 Sensor Data</h1>
+    <div class="data-container">
+        <div class="data-title">Temperature</div>
+        <div id="temperature" class="data-value">Loading...</div>
+    </div>
+    <div class="data-container">
+        <div class="data-title">Pressure</div>
+        <div id="pressure" class="data-value">Loading...</div>
+    </div>
+    <div class="data-container">
+        <div class="data-title">Altitude</div>
+        <div id="altitude" class="data-value">Loading...</div>
+    </div>
+
+    <script>
+        const channelID = '2585307';
+        const readAPIKey = 'LAWUL8VZEN1YH13A';
+
+        async function fetchData() {
+            try {
+                const response = await fetch(`https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPIKey}&results=1`);
+                const data = await response.json();
+                const feed = data.feeds[0];
+
+                document.getElementById('temperature').innerText = `${feed.field1} °C`;
+                document.getElementById('pressure').innerText = `${feed.field2} hPa`;
+                document.getElementById('altitude').innerText = `${feed.field3} m`;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        fetchData();
+        setInterval(fetchData, 15000); // Refresh data every 15 seconds
+    </script>
+</body>
+</html>
